@@ -9,6 +9,7 @@ public class Main    {
         beanFactory.instantiate("model.services");
         beanFactory.populateProperties();
         beanFactory.injectBeanNames();
+        beanFactory.injectBeanFactory();
 
         ProductService productService = (ProductService) beanFactory.getBean("productService");
         System.out.println(productService);
@@ -19,5 +20,6 @@ public class Main    {
         System.out.println("Bean name = " + productService.getPromotionService().getBeanName());
 
         System.out.println(productService.getResourceService());
+        System.out.println("BeanFactory = " + productService.getResourceService().getBeanFactory());
     }
 }
