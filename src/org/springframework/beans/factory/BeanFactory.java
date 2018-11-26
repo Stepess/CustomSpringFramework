@@ -121,10 +121,17 @@ public class BeanFactory {
     }
 
     public void injectBeanFactory() {
-        for (String name: singletons.keySet()) {
-            Object bean = singletons.get(name);
+        for (Object bean: singletons.values()) {
             if (bean instanceof BeanFactoryAware) {
                 ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+        }
+    }
+
+    public void initializeBeans() {
+        for (Object bean: singletons.values()) {
+            if (bean instanceof InitializingBean) {
+                ((InitializingBean) bean).afterPropertiesSet();
             }
         }
     }

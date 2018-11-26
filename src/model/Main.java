@@ -10,6 +10,7 @@ public class Main    {
         beanFactory.populateProperties();
         beanFactory.injectBeanNames();
         beanFactory.injectBeanFactory();
+        beanFactory.initializeBeans();
 
         ProductService productService = (ProductService) beanFactory.getBean("productService");
         System.out.println(productService);
