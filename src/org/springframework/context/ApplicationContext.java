@@ -14,6 +14,10 @@ public class ApplicationContext {
         beanFactory.addPostProcessor(new InitDestroyAnnotationBeanPostProcess());
         beanFactory.injectBeanNames();
         beanFactory.injectBeanFactory();
+
+
+        SignatureWriter.printSignature();
+
         beanFactory.initializeBeans();
     }
 
