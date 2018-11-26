@@ -18,6 +18,7 @@ public class BeanFactory {
     }
 
     //TODO try to write with reflection example in stackoverflow
+    //https://stackoverflow.com/questions/520328/can-you-find-all-classes-in-a-package-using-reflection
     public void instantiate(String basePackage) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
@@ -26,27 +27,32 @@ public class BeanFactory {
         try {
             Enumeration<URL> resources = classLoader.getResources(path);
 
-            //TODO try to scan embedded directories via recursion
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
 
                 File file = new File(resource.toURI());
-                for (File classFile: file.listFiles()) {
+                for (File classFile : file.listFiles()) {
                     String fileName = classFile.getName();
+
+                    //recursive scanning
                     if (classFile.isDirectory()) {
-                        instantiate(basePackage+"."+fileName);
+                        instantiate(basePackage + "." + fileName);
                     }
+
                     if (fileName.endsWith(".class")) {
                         String className = fileName.substring(0, fileName.lastIndexOf('.'));
                         Class<?> classObject = Class.forName(basePackage + "." + className);
                         if (classObject.isAnnotationPresent(Component.class)) {
                             System.out.println("Component: " + classObject);
+                            Object instance = classObject.newInstance();
+                            String beanName = className.substring(0, 1).toLowerCase() + className.substring(1);
+                            singletons.put(beanName, instance);
                         }
                     }
                 }
 
             }
-        } catch (IOException | URISyntaxException | ClassNotFoundException e) {
+        } catch (IOException | URISyntaxException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
 
