@@ -1,7 +1,8 @@
 package model.services;
 
 import org.springframework.beans.factory.stereotype.Component;
+import org.springframework.beans.factory.stereotype.Service;
 
-@Component
+@Service
 public class PromotionService {
 }

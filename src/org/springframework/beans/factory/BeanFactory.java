@@ -1,6 +1,7 @@
 package org.springframework.beans.factory;
 
 import org.springframework.beans.factory.stereotype.Component;
+import org.springframework.beans.factory.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,11 +43,15 @@ public class BeanFactory {
                     if (fileName.endsWith(".class")) {
                         String className = fileName.substring(0, fileName.lastIndexOf('.'));
                         Class<?> classObject = Class.forName(basePackage + "." + className);
+
                         if (classObject.isAnnotationPresent(Component.class)) {
                             System.out.println("Component: " + classObject);
-                            Object instance = classObject.newInstance();
-                            String beanName = className.substring(0, 1).toLowerCase() + className.substring(1);
-                            singletons.put(beanName, instance);
+                            addClassToBeanContainer(className, classObject);
+                        }
+
+                        if (classObject.isAnnotationPresent(Service.class)) {
+                            System.out.println("Service: " + classObject);
+                            addClassToBeanContainer(className, classObject);
                         }
                     }
                 }
@@ -56,5 +61,11 @@ public class BeanFactory {
             e.printStackTrace();
         }
 
+    }
+
+    private void addClassToBeanContainer(String className, Class<?> classObject) throws InstantiationException, IllegalAccessException {
+        Object instance = classObject.newInstance();
+        String beanName = className.substring(0, 1).toLowerCase() + className.substring(1);
+        singletons.put(beanName, instance);
     }
 }
