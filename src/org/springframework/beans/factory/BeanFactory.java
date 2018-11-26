@@ -148,6 +148,10 @@ public class BeanFactory {
         }
     }
 
+    public Map<String, Object> getSingletons() {
+        return singletons;
+    }
+
     public void close() {
         for (Object bean: singletons.values()) {
             Method[] methods = bean.getClass().getMethods();

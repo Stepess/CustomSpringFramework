@@ -6,9 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class SignatureWriter {
+    public static final String PATH_TO_SIGNATURE = "src/resources/sign.txt";
+
     public static void printSignature() {
         try {
-            File file = new File("src/resources/sign.txt");
+            File file = new File(PATH_TO_SIGNATURE);
             FileReader fileReader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             StringBuffer stringBuffer = new StringBuffer();
