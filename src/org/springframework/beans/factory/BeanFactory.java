@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.stereotype.Component;
 import org.springframework.beans.factory.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -77,23 +78,36 @@ public class BeanFactory {
         System.out.println("==populateProperties==");
 
         //TODO think about three cycles
-        for (Object object: singletons.values()) {
-            for(Field field:object.getClass().getDeclaredFields()) {
+        for (Object object : singletons.values()) {
+            for (Field field : object.getClass().getDeclaredFields()) {
                 if (field.isAnnotationPresent(Autowired.class)) {
                     for (Object dependency : singletons.values()) {
                         if (dependency.getClass().equals(field.getType())) {
-                            try {
-                            String setterName = "set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
-                            System.out.println("Setter name = " + setterName);
-                            Method setter = object.getClass().getMethod(setterName, dependency.getClass());
-                            setter.invoke(object, dependency);
-                            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
+                            injectDependencyToObjectFieldWithSetter(object, field, dependency);
                         }
                     }
                 }
+                if (field.isAnnotationPresent(Resource.class)) {
+                    Resource annotation = field.getAnnotation(Resource.class);
+                    String dependencyBeanName = annotation.name();
+                    Object dependency = singletons.get(dependencyBeanName);
+                    if (dependency == null) {
+                        throw new RuntimeException("NoSuchBeanDefinition: " + dependencyBeanName);
+                    }
+                    injectDependencyToObjectFieldWithSetter(object, field, dependency);
+                }
             }
+        }
+    }
+
+    private void injectDependencyToObjectFieldWithSetter(Object object, Field field, Object dependency) {
+        try {
+            String setterName = "set" + field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);
+            System.out.println("Setter name = " + setterName);
+            Method setter = object.getClass().getMethod(setterName, dependency.getClass());
+            setter.invoke(object, dependency);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 }

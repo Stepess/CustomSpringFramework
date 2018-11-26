@@ -14,5 +14,7 @@ public class Main    {
         beanFactory.populateProperties();
 
         System.out.println(productService.getPromotionService());
+
+        System.out.println(productService.getResourceService());
     }
 }
