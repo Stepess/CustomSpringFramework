@@ -22,6 +22,7 @@ public class BeanFactory {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 
         String path = basePackage.replace('.', '/');
+
         try {
             Enumeration<URL> resources = classLoader.getResources(path);
 
@@ -32,6 +33,9 @@ public class BeanFactory {
                 File file = new File(resource.toURI());
                 for (File classFile: file.listFiles()) {
                     String fileName = classFile.getName();
+                    if (classFile.isDirectory()) {
+                        instantiate(basePackage+"."+fileName);
+                    }
                     if (fileName.endsWith(".class")) {
                         String className = fileName.substring(0, fileName.lastIndexOf('.'));
                         Class<?> classObject = Class.forName(basePackage + "." + className);
