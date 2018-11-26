@@ -2,6 +2,7 @@ package org.springframework.beans.factory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.javax.annotation.PreDestroy;
 import org.springframework.beans.factory.stereotype.Component;
 import org.springframework.beans.factory.stereotype.Service;
 
@@ -143,6 +144,24 @@ public class BeanFactory {
             }
             for (BeanPostProcessor postProcessor: postProcessors) {
                 postProcessor.postProcessAfterInitialization(bean, name);
+            }
+        }
+    }
+
+    public void close() {
+        for (Object bean: singletons.values()) {
+            Method[] methods = bean.getClass().getMethods();
+            for (Method method: methods) {
+                if (method.isAnnotationPresent(PreDestroy.class)) {
+                    try {
+                        method.invoke(bean);
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (bean instanceof DisposableBean) {
+                ((DisposableBean) bean).destroy();
             }
         }
     }

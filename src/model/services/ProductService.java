@@ -1,6 +1,8 @@
 package model.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.javax.annotation.PostConstruct;
+import org.springframework.beans.factory.javax.annotation.PreDestroy;
 import org.springframework.beans.factory.stereotype.Component;
 import org.springframework.beans.factory.stereotype.Service;
 
@@ -13,6 +15,17 @@ public class ProductService {
 
     @Resource(name = "resourceService")
     private ResourceService resourceService;
+
+    @PostConstruct
+    public void setUp() {
+        System.out.println("===PostConstruct===");
+        System.out.println("Bean " + promotionService.getBeanName() + " was successfully injected");
+    }
+
+    @PreDestroy
+    public void shutDown() {
+        System.out.println("===PreDestroy===");
+    }
 
     public PromotionService getPromotionService() {
         return promotionService;
