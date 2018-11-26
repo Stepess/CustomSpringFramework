@@ -110,4 +110,13 @@ public class BeanFactory {
             e.printStackTrace();
         }
     }
+
+    public void injectBeanNames() {
+        for (String name : singletons.keySet()) {
+            Object bean = singletons.get(name);
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(name);
+            }
+        }
+    }
 }
