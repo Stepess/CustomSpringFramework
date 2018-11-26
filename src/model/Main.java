@@ -10,5 +10,9 @@ public class Main    {
 
         ProductService productService = (ProductService) beanFactory.getBean("productService");
         System.out.println(productService);
+
+        beanFactory.populateProperties();
+
+        System.out.println(productService.getPromotionService());
     }
 }
